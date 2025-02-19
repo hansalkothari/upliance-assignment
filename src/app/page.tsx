@@ -1,50 +1,40 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import Image from "next/image";
 import Counter from "./components/Counter";
 import RichTextEditor from "./components/RichTextEditor";
 import UserDataForm from "./components/UserDataForm";
-import { useGoogleOneTapLogin, GoogleLogin } from "@react-oauth/google";
+import { GoogleLogin, CredentialResponse } from "@react-oauth/google";
 import { decodeJwt } from "jose";
 
-export default function Home() {
-  const router = useRouter();
-  const [user, setUser] = useState<any>(null);
+interface GoogleUser {
+  name: string;
+  email: string;
+  picture: string;
+}
+
+function Home() {
+  const [user, setUser] = useState<GoogleUser | null>(null);
+  const isClient = typeof window !== "undefined"; // Check if running on client
 
   // Load user from localStorage on client-side only
   useEffect(() => {
-    const storedUser = localStorage.getItem("current_user");
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
-    }
-  }, []);
-
-  // Google One Tap Login configuration
-  useGoogleOneTapLogin({
-    onSuccess: (credentialResponse) => {
-      const { credential } = credentialResponse;
-      if (credential) {
-        const payload = decodeJwt(credential);
-        const currentUser = {
-          name: payload.name,
-          email: payload.email,
-          picture: payload.picture,
-        };
-        localStorage.setItem("current_user", JSON.stringify(currentUser));
-        setUser(currentUser);
+    if (isClient) {
+      const storedUser = localStorage.getItem("current_user");
+      if (storedUser) {
+        setUser(JSON.parse(storedUser));
       }
-    },
-    onError: () => console.error("Error logging in"),
-  });
+    }
+  }, [isClient]);
 
   // Callback for the GoogleLogin button
-  const loginButton = (credentialResponse: any) => {
+  const loginButton = (credentialResponse: CredentialResponse) => {
+    if (!isClient) return; // Prevent running on the server
+
     const { credential } = credentialResponse;
     if (credential) {
-      const payload = decodeJwt(credential);
-      const currentUser = {
+      const payload = decodeJwt(credential) as { name: string; email: string; picture: string };
+      const currentUser: GoogleUser = {
         name: payload.name,
         email: payload.email,
         picture: payload.picture,
@@ -68,15 +58,19 @@ export default function Home() {
         </div>
       ) : (
         <div className="flex justify-center items-center h-screen">
-          <GoogleLogin
-            onSuccess={loginButton}
-            onError={() => {
-              console.error("Login Failed");
-            }}
-            useOneTap
-          />
+          {isClient && (
+            <GoogleLogin
+              onSuccess={loginButton}
+              onError={() => {
+                console.error("Login Failed");
+              }}
+              useOneTap
+            />
+          )}
         </div>
       )}
     </div>
   );
 }
+
+export default Home;

@@ -3,16 +3,13 @@
 import React, { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
 import { Box, Paper, Typography } from "@mui/material";
-import "react-quill/dist/quill.snow.css";
 
 
-// Dynamically import ReactQuill to avoid SSR issues.
-import ReactQuill from 'react-quill-new';
+const ReactQuill = dynamic(() => import("react-quill-new"), { ssr: false });
 import "react-quill/dist/quill.snow.css";
 
 const RichTextEditor: React.FC = () => {
     const [content, setContent] = useState<string>("");
-    // Load saved content from localStorage on component mount.
     useEffect(() => {
       const storedContent = localStorage.getItem("richTextContent");
       if (storedContent) {
