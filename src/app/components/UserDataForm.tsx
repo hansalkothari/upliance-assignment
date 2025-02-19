@@ -33,7 +33,7 @@ export default function UserDataForm() {
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
       if (isDirty) {
         e.preventDefault();
-        e.returnValue = "";
+        e.returnValue = "Unsaved Changes, do you really want to reload the page?";
       }
     };
 
@@ -69,11 +69,23 @@ export default function UserDataForm() {
 
   return (
     <Container maxWidth="sm" sx={{ mt: 4 }}>
-      <Paper elevation={0} sx={{ p: 4 }}>
+      <Paper
+        elevation={3}
+        sx={{
+          p: 4,
+        }}
+      >
         <Typography variant="h4" component="h1" gutterBottom>
           User Data Form
         </Typography>
-        <Box component="form" onSubmit={handleSubmit} noValidate autoComplete="off" sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+
+        <Box
+          component="form"
+          onSubmit={handleSubmit}
+          noValidate
+          autoComplete="off"
+          sx={{ display: "flex", flexDirection: "column", gap: 2 }}
+        >
           <TextField
             label="Name"
             name="name"
@@ -110,7 +122,12 @@ export default function UserDataForm() {
             type="tel"
             required
           />
-          <Button type="submit" variant="contained" color="primary" sx={{ mt: 2 }}>
+          <Button
+            type="submit"
+            variant="contained"
+            color="primary"
+            sx={{ mt: 2 }}
+          >
             Save Data
           </Button>
         </Box>

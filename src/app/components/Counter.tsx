@@ -26,11 +26,11 @@ export default function Counter() {
   const dynamicBackground = `rgba(29, 78, 216, ${dynamicOpacity})`
 
   return (
-    <div className="min-h-full w-full flex p-4 justify-center items-center transition-all duration-500"
+    <div className="w-full flex p-4 justify-center items-center transition-all duration-500"
     style={{ backgroundColor: dynamicBackground }}
     >
       <div
-        className="bg-opacity-20 backdrop-blur-md p-8  min-h-full w-full" 
+        className="bg-opacity-20 backdrop-blur-md p-8  w-full" 
       >
         <h2 className="text-4xl font-extrabold text-gray-400 mb-6 text-center">
           Counter: {count}
